@@ -17,11 +17,19 @@ const INITIAL_SPEED = 3;
 const SPEED_INCREMENT = 0.1;
 const SPAWN_RATE = 100; // frames between spawns initially
 
+interface InsectDef {
+  type: string;
+  sprites: readonly string[];
+  spriteIndex: number;
+  color?: string;
+  gradient?: string[];
+}
+
 interface Insect {
   id: number;
   lane: number;
   y: number;
-  def: any;
+  def: InsectDef;
   speed: number;
   scored: boolean;
 }
@@ -63,7 +71,7 @@ export default function Game() {
     feverFramesLeft: 0,
   });
 
-  const requestRef = useRef<number>();
+  const requestRef = useRef<number | undefined>(undefined);
   const updateRef = useRef<() => void>(() => {});
 
   useEffect(() => {

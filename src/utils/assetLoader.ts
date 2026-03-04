@@ -39,7 +39,7 @@ class AssetLoader {
             resolve();
           };
           img.onerror = () => {
-            console.warn(`Failed to load asset: ${path}`);
+            // Fail silently - will fall back to gradient
             resolve();
           };
           img.src = path;
