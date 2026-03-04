@@ -4,6 +4,7 @@ class AudioEngine {
   bpm = 128;
   isPlaying = false;
   current16thNote = 0;
+  total16ths = 0; // Non-wrapping counter for bar calculations
   nextNoteTime = 0.0;
   scheduleAheadTime = 0.1;
   lookahead = 25.0;
@@ -31,11 +32,12 @@ class AudioEngine {
     const secondsPerBeat = 60.0 / this.bpm;
     this.nextNoteTime += 0.25 * secondsPerBeat;
     this.current16thNote = (this.current16thNote + 1) % 16;
+    this.total16ths++; // Track total without wrapping
   }
 
   scheduleNote(beatNumber: number, time: number) {
     if (!this.ctx || !this.masterGain) return;
-    const bar = Math.floor(this.current16thNote / 16);
+    const bar = Math.floor(this.total16ths / 16);
     const barOfSection = bar % 8;
     const section = Math.floor(bar / 8) % 4;
     let playKick = false, playBass = false, playSnare = false, playClosedHat = false, playOpenHat = false, playAcid = false, playArp = false;
