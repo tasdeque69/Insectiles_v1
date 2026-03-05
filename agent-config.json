@@ -1,0 +1,52 @@
+{
+  "project": "Pinik Pipra",
+  "version": "1.0.0",
+  "system": "AUTONOMOUS_MULTI_AGENT",
+  "coordinator": {
+    "name": "CODEX",
+    "role": "Head Admin & Coordinator",
+    "responsibility": "Creates tasks, sets priorities, resolves conflicts, reviews critical changes",
+    "doesNot": "Assign tasks to specific agents - agents self-pick"
+  },
+  "agents": [
+    {
+      "name": "Cline",
+      "role": "Frontend Specialist",
+      "specialization": ["UI", "styling", "animations", "components"],
+      "canPick": ["Frontend", "General"]
+    },
+    {
+      "name": "Jules", 
+      "role": "Backend/Game Specialist",
+      "specialization": ["game_logic", "canvas", "audio", "performance"],
+      "canPick": ["Backend", "General"]
+    },
+    {
+      "name": "Codex",
+      "role": "General Execution",
+      "specialization": ["any"],
+      "canPick": ["Frontend", "Backend", "General"]
+    }
+  ],
+  "workflow": {
+    "step1": "CODEX creates tasks in TASK_POOL.md",
+    "step2": "Agents self-pick matching tasks",
+    "step3": "Agents execute autonomously",
+    "step4": "Agents mark complete in TASK_POOL.md",
+    "step5": "CODEX reviews critical changes"
+  },
+  "commands": {
+    "dev": "npm run dev",
+    "build": "npm run build", 
+    "lint": "npm run lint",
+    "clean": "npm run clean"
+  },
+  "git": {
+    "mainBranch": "main",
+    "prefixes": {
+      "Cline": "cline/",
+      "Jules": "jules/",
+      "Codex": "coodex/"
+    }
+  }
+}
