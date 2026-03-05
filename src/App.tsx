@@ -4,14 +4,14 @@
  */
 
 import Game from './components/Game';
-import { ErrorBoundary } from './components/ErrorBoundary';
+import ErrorBoundary from './components/ErrorBoundary';
 
 export default function App() {
   return (
-    <ErrorBoundary>
-      <div className="h-full w-full bg-zinc-950 flex items-center justify-center">
+    <div className="h-full w-full bg-zinc-950 flex items-center justify-center">
+      <ErrorBoundary>
         <Game />
-      </div>
-    </ErrorBoundary>
+      </ErrorBoundary>
+    </div>
   );
 }

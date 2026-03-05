@@ -80,6 +80,36 @@ feat/* or fix/* ← Your branches
 
 ---
 
+
+## 🚀 Deployment (Vercel)
+
+This repo now includes `vercel.json` for Vite + SPA rewrite support.
+
+```bash
+npm run build
+```
+
+Then deploy from Vercel (Import Git Repository) or with Vercel CLI:
+
+```bash
+npx vercel --prod
+```
+
+> Note: real-device mobile testing is still required before launch.
+
+---
+
+## ✅ CI Quality Gate
+
+GitHub Actions workflow added at `.github/workflows/ci.yml` to enforce:
+- `npm run lint`
+- `npm run test`
+- `npm run build`
+
+on push/PR for `main` and `dev`.
+
+---
+
 ## 📊 Current Status
 
 | Metric | Status |
@@ -98,7 +128,14 @@ feat/* or fix/* ← Your branches
 | AGENTS.md | AI agent workflow |
 | TASKS.md | Task board |
 | JULES_PROMPT.md | Jules development instructions |
-| AUDIT_REPORT.md | Codebase audit (4.2/10) |
+| AUDIT_REPORT.md | Historical codebase audit (4.2/10) |
+| CTO_AUDIT_REPORT_2026-03-05.md | CTO-level forensic audit and roadmap |
+| CTO_AUDIT_REPORT_2026-03-07.md | CTO progress re-audit (8.1/10) |
+| CONTRIBUTING.md | Contribution workflow and quality gate |
+| SECURITY.md | Security policy and reporting |
+| MOBILE_TEST_REPORT.md | Mobile emulation verification evidence |
+| RELEASE_READINESS.md | Release readiness and external blockers |
+| RELEASE_SIGNOFF_CHECKLIST.md | Final release approval checklist |
 
 ---
 
