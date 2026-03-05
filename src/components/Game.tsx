@@ -12,7 +12,6 @@ interface Insect {
   spriteIndex: number;
   speed: number;
   isFeverTarget?: boolean;
-  cachedImage?: HTMLImageElement;
 }
 
 interface PsyEffect {
@@ -47,20 +46,23 @@ export default function Game() {
     shake: 0,
   });
 
-  const requestRef = useRef<number | undefined>(undefined);
+  const requestRef = useRef<number>(0);
 
   useEffect(() => {
     const load = async () => {
       try {
-        const { images, videos } = await preloadAssets(
+        const result = await preloadAssets(
           Object.values(ASSET_PATHS.IMAGES),
           Object.values(ASSET_PATHS.ANIMATIONS)
         );
-        imagesRef.current = images;
-        videosRef.current = videos;
+        imagesRef.current = result.images;
+        videosRef.current = result.videos;
         setAssetsLoaded(true);
+        if (result.hasErrors) {
+          console.warn('Some assets failed to load - game may have visual issues');
+        }
       } catch (error) {
-        console.error("Failed to load assets", error);
+        console.error('Failed to load assets:', error);
       }
     };
     load();
@@ -69,7 +71,6 @@ export default function Game() {
   const spawnInsect = () => {
     const lane = Math.floor(Math.random() * GAME_SETTINGS.LANE_COUNT);
     const spriteIndex = isFeverMode ? (Math.floor(Math.random() * 4) + 8) : Math.floor(Math.random() * 4);
-    const cachedImage = imagesRef.current[spriteIndex];
     state.current.insects.push({
       id: state.current.insectIdCounter++,
       lane,
@@ -77,7 +78,6 @@ export default function Game() {
       spriteIndex,
       speed: state.current.speed * (isFeverMode ? 1.5 : 1),
       isFeverTarget: isFeverMode,
-      cachedImage,
     });
   };
 
@@ -106,11 +106,7 @@ export default function Game() {
   };
 
   const update = () => {
-    const { gameOver, isPlaying, score, isFeverMode, setFeverMode } = useGameStore.getState();
-    if (gameOver || !isPlaying) {
-      requestRef.current = requestAnimationFrame(update);
-      return;
-    }
+    if (gameOver || !isPlaying) return;
 
     state.current.frames++;
     state.current.hue = (state.current.hue + (isFeverMode ? 5 : 1)) % 360;
@@ -135,26 +131,23 @@ export default function Game() {
       state.current.lastSpawnFrame = state.current.frames;
     }
 
-    for (const insect of state.current.insects) {
+    state.current.insects.forEach((insect) => {
       insect.y += insect.speed;
-      const currentHeight = canvasRef.current?.height || 0;
-      if (insect.y > currentHeight) {
+      if (insect.y > (canvasRef.current?.height || 0)) {
         if (!isFeverMode) {
-          useGameStore.getState().setGameOver(true);
+          setGameOver(true);
           audio.playErrorSound();
           audio.stopBgm();
         } else {
           insect.y = -GAME_SETTINGS.TILE_HEIGHT;
         }
       }
-    }
+    });
 
-    for (let i = state.current.psyEffects.length - 1; i >= 0; i--) {
-      state.current.psyEffects[i].life++;
-      if (state.current.psyEffects[i].life >= state.current.psyEffects[i].maxLife) {
-        state.current.psyEffects.splice(i, 1);
-      }
-    }
+    state.current.psyEffects = state.current.psyEffects.filter(p => {
+      p.life++;
+      return p.life < p.maxLife;
+    });
 
     draw();
     requestRef.current = requestAnimationFrame(update);
@@ -164,8 +157,6 @@ export default function Game() {
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext('2d');
     if (!canvas || !ctx) return;
-    
-    const { isFeverMode } = useGameStore.getState();
 
     ctx.save();
     if (state.current.shake > 0) ctx.translate(Math.random() * state.current.shake, Math.random() * state.current.shake);
@@ -189,23 +180,20 @@ export default function Game() {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     const laneWidth = canvas.width / GAME_SETTINGS.LANE_COUNT;
-    const intensity = isFeverMode;
-    const currentHue = state.current.hue;
-    const currentFrames = state.current.frames;
-    for (const insect of state.current.insects) {
-      const img = insect.cachedImage;
+    state.current.insects.forEach((insect) => {
+      const img = imagesRef.current[insect.spriteIndex];
       if (img) {
-        const size = GAME_SETTINGS.TILE_HEIGHT * (intensity ? 1.2 : 0.8);
+        const size = GAME_SETTINGS.TILE_HEIGHT * (isFeverMode ? 1.2 : 0.8);
         ctx.save();
         ctx.translate(insect.lane * laneWidth + laneWidth / 2, insect.y + GAME_SETTINGS.TILE_HEIGHT / 2);
-        ctx.rotate(currentFrames * (intensity ? 0.2 : 0.05) * (insect.id % 2 === 0 ? 1 : -1));
-        if (intensity) { ctx.shadowBlur = 20; ctx.shadowColor = `hsla(${currentHue}, 100%, 50%, 1)`; }
+        ctx.rotate(state.current.frames * (isFeverMode ? 0.2 : 0.05) * (insect.id % 2 === 0 ? 1 : -1));
+        if (isFeverMode) { ctx.shadowBlur = 20; ctx.shadowColor = `hsla(${state.current.hue}, 100%, 50%, 1)`; }
         ctx.drawImage(img, -size/2, -size/2, size, size);
         ctx.restore();
       }
-    }
+    });
 
-    for (const p of state.current.psyEffects) {
+    state.current.psyEffects.forEach((p) => {
       const progress = p.life / p.maxLife;
       ctx.save();
       ctx.translate(p.x, p.y);
@@ -215,14 +203,14 @@ export default function Game() {
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       const symbols = ['🍄', '🌀', '🧠', '✨', '🐜'];
-      ctx.fillText(symbols[Math.floor(p.hue % symbols.length)], 0, 0);
+      const symbol = symbols[Math.floor(p.hue % symbols.length)] ?? '✨';
+      ctx.fillText(symbol, 0, 0);
       ctx.restore();
-    }
+    });
     ctx.restore();
   };
 
   const handleInteraction = (clientX: number, clientY: number) => {
-    const { isPlaying, gameOver, isFeverMode, addScore } = useGameStore.getState();
     if (!isPlaying || gameOver) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -235,7 +223,7 @@ export default function Game() {
       .filter(ins => ins.lane === clickedLane)
       .sort((a, b) => b.y - a.y);
     if (laneInsects.length > 0) {
-      const target = laneInsects[0];
+      const target = laneInsects[0]!;
       state.current.insects = state.current.insects.filter(ins => ins.id !== target.id);
       addScore(isFeverMode ? 20 : 10);
       state.current.shake = isFeverMode ? 15 : 5;
@@ -260,36 +248,9 @@ export default function Game() {
     }
   }, [assetsLoaded]);
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      const keyLaneMap: Record<string, number> = { '1': 0, '2': 1, '3': 2, '4': 3 };
-      if (keyLaneMap.hasOwnProperty(e.key)) {
-        const lane = keyLaneMap[e.key];
-        const canvas = canvasRef.current;
-        if (!canvas) return;
-        const laneWidth = canvas.width / GAME_SETTINGS.LANE_COUNT;
-        const laneInsects = state.current.insects
-          .filter(ins => ins.lane === lane)
-          .sort((a, b) => b.y - a.y);
-        if (laneInsects.length > 0) {
-          const target = laneInsects[0];
-          const { isFeverMode, addScore } = useGameStore.getState();
-          state.current.insects = state.current.insects.filter(ins => ins.id !== target.id);
-          addScore(isFeverMode ? 20 : 10);
-          state.current.shake = isFeverMode ? 15 : 5;
-          createPsyEffect(target.lane * laneWidth + laneWidth / 2, target.y + GAME_SETTINGS.TILE_HEIGHT / 2);
-          audio.playTapSound(isFeverMode);
-          videosRef.current.forEach(v => { if (v.paused) v.play().catch(() => {}); });
-        }
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
-
   if (!assetsLoaded) {
     return (
-      <div className="flex items-center justify-center w-full h-full bg-black text-white">
+      <div className="flex items-center justify-center w-full h-full bg-[#0A0A0F] text-white">
         <div className="text-2xl animate-pulse font-mono tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-500 via-cyan-500 to-yellow-500">LOADING PINIK PIPRA...</div>
       </div>
     );
@@ -320,7 +281,10 @@ export default function Game() {
         ref={canvasRef}
         className="block w-full h-full touch-none"
         onMouseDown={(e) => handleInteraction(e.clientX, e.clientY)}
-        onTouchStart={(e) => handleInteraction(e.touches[0].clientX, e.touches[0].clientY)}
+        onTouchStart={(e) => {
+          const touch = e.touches[0];
+          if (touch) handleInteraction(touch.clientX, touch.clientY);
+        }}
       />
 
       <AnimatePresence>
@@ -333,7 +297,7 @@ export default function Game() {
               <p className="text-white font-mono text-4xl font-bold underline decoration-fuchsia-500">Score: {score}</p>
             </motion.div>
           )}
-          <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={startGame} aria-label={gameOver ? "Restart game" : "Start game"} className="px-12 py-5 bg-white text-black font-black text-2xl rounded-full transition-shadow shadow-[0_0_30px_rgba(255,255,255,0.4)] hover:shadow-[0_0_50px_rgba(255,255,255,0.8)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-cyan-400">
+          <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={startGame} className="px-12 py-5 bg-white text-black font-black text-2xl rounded-full transition-shadow shadow-[0_0_30px_rgba(255,255,255,0.4)] hover:shadow-[0_0_50px_rgba(255,255,255,0.8)]">
             {gameOver ? 'RE-UP' : 'BEGIN TRIP'}
           </motion.button>
           <p className="mt-8 text-white/30 text-xs font-mono uppercase tracking-[0.2em]">"Get high with the ants"</p>

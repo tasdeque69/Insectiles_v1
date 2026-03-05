@@ -4,7 +4,6 @@ class AudioEngine {
   bpm = 128;
   isPlaying = false;
   current16thNote = 0;
-  total16ths = 0; // Non-wrapping counter for bar calculations
   nextNoteTime = 0.0;
   scheduleAheadTime = 0.1;
   lookahead = 25.0;
@@ -32,12 +31,11 @@ class AudioEngine {
     const secondsPerBeat = 60.0 / this.bpm;
     this.nextNoteTime += 0.25 * secondsPerBeat;
     this.current16thNote = (this.current16thNote + 1) % 16;
-    this.total16ths++; // Track total without wrapping
   }
 
   scheduleNote(beatNumber: number, time: number) {
     if (!this.ctx || !this.masterGain) return;
-    const bar = Math.floor(this.total16ths / 16);
+    const bar = Math.floor(this.current16thNote / 16);
     const barOfSection = bar % 8;
     const section = Math.floor(bar / 8) % 4;
     let playKick = false, playBass = false, playSnare = false, playClosedHat = false, playOpenHat = false, playAcid = false, playArp = false;
@@ -135,7 +133,8 @@ class AudioEngine {
     const gain = this.ctx.createGain();
     const filter = this.ctx.createBiquadFilter();
     const acidNotes = [174.61, 196.00, 233.08, 261.63, 311.13];
-    osc.type = 'square'; osc.frequency.value = acidNotes[beatNumber % acidNotes.length] * (section === 2 ? 4 : 2);
+    const acidNote = acidNotes[beatNumber % acidNotes.length] ?? 261.63;
+    osc.type = 'square'; osc.frequency.value = acidNote * (section === 2 ? 4 : 2);
     this.filterCutoff += (section === 1 ? 100 : 50) * this.filterSweepDir;
     if (this.filterCutoff > 4000) this.filterSweepDir = -1;
     if (this.filterCutoff < 300) this.filterSweepDir = 1;
@@ -155,7 +154,8 @@ class AudioEngine {
     const filter = this.ctx.createBiquadFilter();
     const chords = [[174.61, 207.65, 261.63], [155.56, 196.00, 233.08], [138.59, 164.81, 207.65], [130.81, 164.81, 196.00]];
     const chord = chords[Math.floor(bar / 2) % 4];
-    const note = chord[beatNumber % 3] * 2;
+    if (!chord) return;
+    const note = (chord[beatNumber % 3] ?? 261.63) * 2;
     osc.type = 'sawtooth'; osc.frequency.value = note;
     filter.type = 'lowpass'; filter.frequency.setValueAtTime(2500, time);
     filter.frequency.exponentialRampToValueAtTime(300, time + 0.2);
@@ -199,7 +199,7 @@ class AudioEngine {
       osc.frequency.exponentialRampToValueAtTime(1760, this.ctx.currentTime + 0.1);
       gain.gain.setValueAtTime(0.8, this.ctx.currentTime);
     } else {
-      const freq = this.notes[this.noteIndex % this.notes.length];
+      const freq = this.notes[this.noteIndex % this.notes.length] ?? 261.63;
       this.noteIndex++; osc.type = 'triangle';
       osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
       gain.gain.setValueAtTime(0.5, this.ctx.currentTime);
