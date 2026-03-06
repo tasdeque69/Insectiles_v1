@@ -1,5 +1,6 @@
 import { useSyncExternalStore } from 'react';
 import { GAME_SETTINGS } from '../constants';
+import { safeStorage } from '../utils/safeStorage';
 
 const FEVER_THRESHOLD = GAME_SETTINGS.FEVER_THRESHOLD;
 
@@ -55,7 +56,7 @@ const PERSIST_KEY = 'pinik_pipra_state';
 const MAX_LEADERBOARD = 5;
 
 const readPersistedState = (): PersistedState => {
-  const raw = localStorage.getItem(PERSIST_KEY);
+  const raw = safeStorage.getItem(PERSIST_KEY);
   if (!raw) return { highScore: 0, leaderboard: [], soundEnabled: true };
 
   try {
@@ -85,9 +86,9 @@ const persistState = (next: GameState) => {
   };
 
   try {
-    localStorage.setItem(PERSIST_KEY, JSON.stringify(payload));
+    safeStorage.setItem(PERSIST_KEY, JSON.stringify(payload));
   } catch {
-    // Ignore storage quota/privacy-mode failures and keep in-memory state alive.
+    // safeStorage is designed to avoid throw paths, keep this as defensive no-op.
   }
 };
 

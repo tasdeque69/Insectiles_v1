@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { audio } from '../utils/audio';
 import { useGameStore } from '../store/useGameStore';
 import { ASSET_PATHS, GAME_SETTINGS } from '../constants';
@@ -6,6 +6,9 @@ import { preloadAssets } from '../utils/assetLoader';
 import { getLaneFromClientX } from '../utils/input';
 import { GameEngine } from '../utils/gameEngine';
 import { logger } from '../utils/logger';
+import { PerfSampler, type PerfSnapshot } from '../utils/perfSampler';
+import { safeStorage } from '../utils/safeStorage';
+import { isEnabledFlag } from '../utils/flags';
 import GameHud from './GameHud';
 import GameOverlay from './GameOverlay';
 
@@ -40,7 +43,25 @@ export default function Game() {
 
   const [assetsLoaded, setAssetsLoaded] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [perfSnapshot, setPerfSnapshot] = useState<PerfSnapshot | null>(null);
   const imagesRef = useRef<HTMLImageElement[]>([]);
+  const perfSamplerRef = useRef(new PerfSampler());
+  const perfUpdateCounterRef = useRef(0);
+  const isMountedRef = useRef(true);
+
+  const showPerfHud = useMemo(() => {
+    if (typeof window === 'undefined') return false;
+    const query = new URLSearchParams(window.location.search).get('debugPerf');
+    const localValue = safeStorage.getItem('pinik_debug_perf');
+    return isEnabledFlag(query) || isEnabledFlag(localValue);
+  }, []);
+
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
   const stopLoop = () => {
     engineRef.current?.stop();
@@ -95,6 +116,9 @@ export default function Game() {
 
     stopLoop();
     startStoreGame();
+    perfSamplerRef.current.reset();
+    perfUpdateCounterRef.current = 0;
+    setPerfSnapshot(null);
 
     engineRef.current = new GameEngine(
       canvas,
@@ -129,6 +153,15 @@ export default function Game() {
         triggerHaptic,
         getReducedMotion: () => reducedMotion,
         stopBgm: () => audio.stopBgm(),
+        onFrame: (timestamp) => {
+          if (!showPerfHud || !isMountedRef.current) return;
+          const snapshot = perfSamplerRef.current.sample(timestamp);
+          perfUpdateCounterRef.current += 1;
+          if (perfUpdateCounterRef.current >= 10) {
+            setPerfSnapshot(snapshot);
+            perfUpdateCounterRef.current = 0;
+          }
+        },
       }
     );
     engineRef.current.start();
@@ -190,6 +223,12 @@ export default function Game() {
   }, []);
 
   useEffect(() => {
+    if (!showPerfHud) {
+      setPerfSnapshot(null);
+    }
+  }, [showPerfHud]);
+
+  useEffect(() => {
     return () => {
       stopLoop();
       audio.stopBgm();
@@ -224,6 +263,8 @@ export default function Game() {
         slowMoActive={isSlowMoActive()}
         soundEnabled={soundEnabled}
         onToggleSound={toggleSound}
+        perfSnapshot={perfSnapshot}
+        showPerfHud={showPerfHud}
       />
 
       <canvas
