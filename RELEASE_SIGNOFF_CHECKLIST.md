@@ -2,7 +2,7 @@
 
 ## Build & Quality
 - [x] `npm run lint` passed (TypeScript strict mode, no errors)
-- [x] `npm run test` passed (48 unit tests, 100% pass rate)
+- [x] `npm run test` passed (59 unit tests, 100% pass rate)
 - [x] `npm run build` passed (production build successful, 67KB gzipped)
 - [ ] `npm run audit:prod` passed (deferred - npm advisory endpoint blocked in CI environment)
 
@@ -12,6 +12,7 @@
 - [ ] Rollback target commit: (planned: merge commit from dev→main)
 
 ## Validation
+- [x] Phase 0 branch analysis completed (local refs + documented blockers)
 - [ ] iOS real device verified: (requires physical device - skipped due to environment)
 - [ ] Android real device verified: (requires physical device - skipped due to environment)
 - [x] Keyboard controls verified (1-4 keys working, tested in dev)
@@ -26,7 +27,7 @@
 - ✅ E2E test coverage added (Playwright with 5 browser targets)
 - ✅ New bug assets integrated (5 PNGs: bug-1-4 + bug-1-multiview)
 - ✅ Test IDs added to critical UI components
-- ✅ All 48 unit tests passing (coverage ~50%)
+- ✅ All 59 unit tests passing (coverage improved vs prior baseline)
 - ✅ Build successful
 - ✅ Code standards: TypeScript strict mode, ESLint, Prettier, CSP headers
 - ✅ Console.error replaced with structured logger

@@ -75,6 +75,7 @@
 | ID | Task | Agent | Blocker Reason |
 |----|------|-------|----------------|
 | AAA-012 | Device testing & 60fps verification | CODEX | Playwright browser CDN 403 in this environment; browser container Chromium crashes (SIGSEGV) |
+| OPS-003 | Execute ordered merge of PRs #3,#5,#13,#11,#10,#7,#2,#6,#4 | CODEX | GitHub network/CLI unavailable in current container (`gh` missing, HTTPS 403); execute from network-enabled workstation |
 
 ---
 
@@ -118,6 +119,7 @@
 | INF-016 | Harden perf telemetry lifecycle & flags | CODEX | 2026-03-07 | Restricted sampling to active play frames, added unmount guard, and expanded debug flag parsing (`1/true`) |
 | INF-017 | Add resilient storage fallback layer | CODEX | 2026-03-07 | Added safeStorage memory fallback and integrated store/debug reads to survive localStorage failures/privacy mode |
 | INF-018 | Normalize debug-flag parsing & storage reads | CODEX | 2026-03-07 | Added reusable flag parser (`1/true/yes/on`), improved fallback precedence, and expanded regression tests |
+| OPS-002 | Phase 0 branch analysis for multi-PR merge plan | CODEX | 2026-03-06 | Completed local-only analysis in `BRANCH_ANALYSIS_2026-03-06.md`; remote branch/PR merge execution blocked by GitHub access limits in container |
 
 ---
 

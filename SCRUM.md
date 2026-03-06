@@ -22,6 +22,23 @@ This project uses an **Autonomous Multi-Agent System** where:
 
 ## Decision Log
 
+### 2026-03-06: Branch/PR merge mission blocked by environment access
+**Decision**: Completed Phase 0 with best-effort local branch analysis; deferred Phases 1-3 remote merge actions.
+**What was tried**:
+- `git branch -a` and `git for-each-ref` for local ref discovery
+- `gh repo branches FahadIbrahim93/Insectiles_HT_v1` for remote branch inventory
+- `git ls-remote --heads https://github.com/FahadIbrahim93/Insectiles_HT_v1.git` for fallback remote branch listing
+
+**What failed**:
+- `gh` CLI unavailable in container (`command not found`)
+- GitHub access blocked (`CONNECT tunnel failed, response 403`)
+- Local repo has no configured `origin`, so PR merge operations cannot be executed from this environment
+
+**Suggested fix**:
+1. Run the merge workflow from a network-enabled environment with `gh` installed and authenticated.
+2. Merge PRs in requested order (#3, #5, #13, #11, #10, #7, #2, #6, #4).
+3. Pull merged `main` into this workspace and rerun quality gates.
+
 ### 2026-03-05: System Design
 **Decision**: Created autonomous multi-agent system
 **Details**:
