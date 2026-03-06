@@ -47,10 +47,20 @@ npm run dev
 ```
 src/
 ├── components/
-│   └── Game.tsx        # Main game component (776 lines)
+│   ├── Game.tsx        # Main game component
+│   ├── GameHud.tsx     # Score/UI overlay
+│   └── GameOverlay.tsx # Start/game-over screens
 ├── utils/
-│   ├── audio.ts        # Psytrance audio generator
-│   └── assetLoader.ts  # Sprite/image loader
+│   ├── gameEngine.ts   # Game loop orchestrator
+│   ├── spawner.ts      # Insect/powerup spawning
+│   ├── effects.ts      # Particles, popups, animations
+│   ├── renderer.ts    # Canvas rendering
+│   ├── powerUpSystem.ts # Powerup management
+│   ├── audio.ts       # Psytrance audio generator
+│   ├── sentry.ts     # Error tracking
+│   └── assetLoader.ts # Sprite/image loader
+├── store/
+│   └── useGameStore.ts # State management
 ├── App.tsx
 ├── main.tsx
 └── index.css
