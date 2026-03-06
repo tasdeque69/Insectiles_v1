@@ -143,3 +143,58 @@ test('GameEngine.stop sets isRunning false and cancels animation frame', () => {
   assert.equal((engine as any)['isRunning'], false);
   assert.equal((engine as any)['requestRef'], undefined);
 });
+
+test('GameEngine loop emits onFrame callback timestamp when provided', () => {
+  let seenTimestamp = 0;
+  const callbacks = {
+    ...mockCallbacks,
+    getIsPlaying: () => true,
+    onFrame: (timestamp: number) => {
+      seenTimestamp = timestamp;
+    },
+  };
+
+  const engine = new GameEngine(
+    { height: 800 } as HTMLCanvasElement,
+    [] as HTMLImageElement[],
+    mockConfig,
+    callbacks
+  );
+
+  (engine as any)['isRunning'] = true;
+  (engine as any)['draw'] = () => {};
+  const previousRaf = global.requestAnimationFrame;
+  try {
+    global.requestAnimationFrame = (() => 1) as any;
+    (engine as any)['loop'](1234);
+  } finally {
+    global.requestAnimationFrame = previousRaf;
+  }
+
+  assert.equal(seenTimestamp, 1234);
+  assert.equal((engine as any)['isRunning'], true);
+});
+
+test('GameEngine loop does not emit onFrame when game is not active', () => {
+  let frameCalls = 0;
+  const callbacks = {
+    ...mockCallbacks,
+    getIsPlaying: () => false,
+    onFrame: () => {
+      frameCalls += 1;
+    },
+  };
+
+  const engine = new GameEngine(
+    { height: 800 } as HTMLCanvasElement,
+    [] as HTMLImageElement[],
+    mockConfig,
+    callbacks
+  );
+
+  (engine as any)['isRunning'] = true;
+  (engine as any)['loop'](99);
+
+  assert.equal(frameCalls, 0);
+  assert.equal((engine as any)['isRunning'], false);
+});

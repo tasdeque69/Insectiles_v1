@@ -113,6 +113,11 @@
 | INF-011 | Add E2E preflight/bootstrap scripts | CODEX | 2026-03-06 | Added e2e:preflight, e2e:install, test:e2e:smoke scripts for reproducible local E2E setup |
 | INF-012 | Add performance smoke benchmark script | CODEX | 2026-03-06 | Added perf:smoke command; validated loop utility average frame budget under 16.67ms in synthetic run |
 | INF-013 | Improve logger with level filtering | CODEX | 2026-03-06 | Added timestamped log format and minimum log-level controls via PINIK_PIPRA_LOG_LEVEL |
+| INF-014 | Add in-game performance telemetry HUD | CODEX | 2026-03-07 | Added optional `?debugPerf=1` FPS/frame-drop overlay to support AAA-012 manual device validation artifacts |
+| INF-015 | Refine perf HUD sampling integration | CODEX | 2026-03-07 | Moved telemetry sampling into engine frame loop and added callback regression test to reduce measurement overhead |
+| INF-016 | Harden perf telemetry lifecycle & flags | CODEX | 2026-03-07 | Restricted sampling to active play frames, added unmount guard, and expanded debug flag parsing (`1/true`) |
+| INF-017 | Add resilient storage fallback layer | CODEX | 2026-03-07 | Added safeStorage memory fallback and integrated store/debug reads to survive localStorage failures/privacy mode |
+| INF-018 | Normalize debug-flag parsing & storage reads | CODEX | 2026-03-07 | Added reusable flag parser (`1/true/yes/on`), improved fallback precedence, and expanded regression tests |
 
 ---
 

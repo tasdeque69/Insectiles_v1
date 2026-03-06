@@ -89,6 +89,7 @@ export interface EngineCallbacks {
   triggerHaptic: (pattern?: number | number[]) => void;
   getReducedMotion: () => boolean;
   stopBgm: () => void;
+  onFrame?: (timestamp: number) => void;
 }
 
 export class GameEngine {
@@ -177,7 +178,7 @@ export class GameEngine {
     this.shake = 0;
   }
 
-  private loop(): void {
+  private loop(timestamp: number = performance.now()): void {
     if (!this.isRunning) return;
 
     const { getIsPlaying, getGameOver, getScore, getIsFeverMode } = this.callbacks;
@@ -188,6 +189,8 @@ export class GameEngine {
       this.stop();
       return;
     }
+
+    this.callbacks.onFrame?.(timestamp);
 
     this.frames++;
     this.hue = (this.hue + (getIsFeverMode() ? 5 : 1)) % 360;
@@ -246,7 +249,7 @@ export class GameEngine {
 
     this.draw();
 
-    this.requestRef = requestAnimationFrame(() => this.loop());
+    this.requestRef = requestAnimationFrame((nextTimestamp) => this.loop(nextTimestamp));
   }
 
   private spawnInsect(): void {
