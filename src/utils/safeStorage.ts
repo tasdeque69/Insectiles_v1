@@ -1,4 +1,4 @@
-type StorageLike = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>;
+type StorageLike = Pick<Storage, 'getItem' | 'setItem' | 'removeItem' | 'length' | 'key'>;
 
 const fallbackStorage = new Map<string, string>();
 
@@ -9,6 +9,26 @@ const getLocalStorage = (): StorageLike | null => {
   } catch {
     return null;
   }
+};
+
+const estimateStorageUsage = (): { used: number; quota: number; percent: number } => {
+  let used = 0;
+  try {
+    const storage = getLocalStorage();
+    if (storage) {
+      for (let i = 0; i < storage.length; i++) {
+        const key = storage.key(i);
+        if (key) {
+          const value = storage.getItem(key);
+          if (value) used += key.length + value.length;
+        }
+      }
+    }
+  } catch {
+    // estimation failed
+  }
+  const quota = 5 * 1024 * 1024;
+  return { used, quota, percent: (used / quota) * 100 };
 };
 
 export const safeStorage = {
@@ -32,8 +52,12 @@ export const safeStorage = {
     if (!storage) return;
     try {
       storage.setItem(key, value);
-    } catch {
-      // fallback memory already updated; continue safely.
+      const { percent } = estimateStorageUsage();
+      if (percent > 80) {
+        console.warn(`[safeStorage] Storage usage high: ${percent.toFixed(1)}%`);
+      }
+    } catch (e) {
+      console.error('[safeStorage] Storage quota exceeded', e);
     }
   },
 
@@ -46,5 +70,9 @@ export const safeStorage = {
     } catch {
       // noop
     }
+  },
+
+  getUsage(): { used: number; quota: number; percent: number } {
+    return estimateStorageUsage();
   },
 };

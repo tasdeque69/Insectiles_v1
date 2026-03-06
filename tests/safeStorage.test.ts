@@ -51,3 +51,16 @@ test('safeStorage returns fallback value if localStorage misses key', () => {
     safeStorage.removeItem('safe:shadow');
   }
 });
+
+test('safeStorage.getUsage returns storage estimate', () => {
+  localStorage.clear();
+  safeStorage.setItem('safe:usage:test', 'test-value');
+  
+  const usage = safeStorage.getUsage();
+  assert.ok(usage.used > 0, 'should estimate used storage');
+  assert.ok(usage.quota > 0, 'should have quota');
+  assert.ok(usage.percent >= 0, 'should have percent');
+  assert.ok(usage.percent < 100, 'should be under 100%');
+  
+  safeStorage.removeItem('safe:usage:test');
+});
