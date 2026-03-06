@@ -92,13 +92,20 @@ This is the current single-source execution board aligned with repository realit
 
 ---
 
+
+### Autonomous decisions finalized in this sweep
+1. CI should run on a pre-baked Playwright image rather than installing browsers at runtime.
+   - Implemented: `.github/workflows/ci.yml` e2e job now uses Playwright pre-baked container image.
+2. Release signoff is split into `Code Complete` and `Ops Complete` checkpoints.
+3. Branch governance: keep `main` synchronized to tested `work` head after quality gates.
+
 ## 🚀 Deployment & Hardening Checklist
 
 | Check | Status | Evidence |
 |---|---|---|
 | Type safety (`npm run lint`) | ✅ | Pass |
 | Production build (`npm run build`) | ✅ | Pass |
-| Unit/integration tests (`npm test`) | ✅ | 80/80 pass |
+| Unit/integration tests (`npm test`) | ✅ | 84/84 pass |
 | Coverage run (`npm run test:coverage`) | ✅ | 86.37% line coverage |
 | Perf smoke (`npm run perf:smoke`) | ✅ | Pass |
 | Playwright browser install | ⚠️ | apt/proxy 403 blocker |
