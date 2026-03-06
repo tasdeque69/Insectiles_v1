@@ -1,4 +1,4 @@
-class AudioEngine {
+export class AudioEngine {
   ctx: AudioContext | null = null;
   masterGain: GainNode | null = null;
   bpm = 128;
@@ -14,6 +14,14 @@ class AudioEngine {
   noiseBuffer: AudioBuffer | null = null;
   notes = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25];
   noteIndex = 0;
+  muted = false;
+
+  setMuted(muted: boolean) {
+    this.muted = muted;
+    if (this.masterGain) {
+      this.masterGain.gain.value = muted ? 0 : 0.5;
+    }
+  }
 
   init() {
     if (this.ctx) return;
@@ -175,6 +183,7 @@ class AudioEngine {
   }
 
   playBgm() {
+    if (this.muted) return;
     if (!this.ctx) return;
     if (this.isPlaying) return;
     this.isPlaying = true;
@@ -191,6 +200,7 @@ class AudioEngine {
   }
 
   playTapSound(isFever = false) {
+    if (this.muted) return;
     if (!this.ctx || !this.masterGain) return;
     const osc = this.ctx.createOscillator();
     const gain = this.ctx.createGain();
@@ -210,6 +220,7 @@ class AudioEngine {
   }
 
   playFeverActivation() {
+    if (this.muted) return;
     if (!this.ctx || !this.masterGain) return;
     const osc = this.ctx.createOscillator();
     const gain = this.ctx.createGain();
@@ -222,6 +233,7 @@ class AudioEngine {
   }
 
   playErrorSound() {
+    if (this.muted) return;
     if (!this.ctx || !this.masterGain) return;
     const osc = this.ctx.createOscillator();
     const gain = this.ctx.createGain();

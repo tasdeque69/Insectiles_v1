@@ -34,7 +34,8 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'npm run dev',
+    command: process.env.CI ? 'npm run preview' : 'npm run dev',
+    port: 3000,
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
   },

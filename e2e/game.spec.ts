@@ -97,6 +97,33 @@ test.describe('Pinik Pipra Game E2E Tests', () => {
     await expect(scoreElement).toBeVisible();
   });
 
+  test('should not produce console errors on normal gameplay', async ({ page }) => {
+    const errors: string[] = [];
+    page.on('console', msg => {
+      if (msg.type() === 'error') {
+        errors.push(msg.text());
+      }
+    });
+
+    await page.click('button:has-text("START")');
+    
+    // Wait and interact
+    await page.waitForTimeout(3000);
+    
+    const canvas = page.locator('canvas');
+    const box = await canvas.boundingBox();
+    if (box) {
+      // Several taps
+      for (let i = 0; i < 5; i++) {
+        await page.mouse.click(box.x + box.width * 0.125 + (i * 20), box.y + box.height * 0.2);
+      }
+    }
+    
+    await page.waitForTimeout(1000);
+    
+    expect(errors.length).toBe(0);
+  });
+
   test('should display game over when insect reaches bottom', async ({ page }) => {
     await page.click('button:has-text("START")');
     

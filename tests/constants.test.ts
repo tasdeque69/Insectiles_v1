@@ -9,6 +9,6 @@ test('game settings include fever threshold and lane count', () => {
 });
 
 test('asset path registry includes expected total assets', () => {
-  assert.equal(Object.keys(ASSET_PATHS.IMAGES).length, 12);
+  assert.equal(Object.keys(ASSET_PATHS.IMAGES).length, 17);
   assert.equal(Object.keys(ASSET_PATHS.ANIMATIONS).length, 2);
 });

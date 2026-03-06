@@ -20,13 +20,13 @@ test('advancePsyEffects increments life and removes expired effects', () => {
 });
 
 test('moveInsects marks bottom hit in normal mode', () => {
-  const result = moveInsects([{ y: 95, speed: 10 }], 100, false, 150);
+  const result = moveInsects([{ y: 95, speed: 10 }], 100, false, 150, 1);
   assert.equal(result.reachedBottom, true);
   assert.equal(result.insects[0].y, 105);
 });
 
 test('moveInsects wraps insects in fever mode', () => {
-  const result = moveInsects([{ y: 95, speed: 10 }], 100, true, 150);
+  const result = moveInsects([{ y: 95, speed: 10 }], 100, true, 150, 1);
   assert.equal(result.reachedBottom, false);
   assert.equal(result.insects[0].y, -150);
 });
