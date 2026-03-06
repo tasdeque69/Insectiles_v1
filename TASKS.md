@@ -26,6 +26,18 @@
 
 ---
 
+## Completed Refactoring (2026-03-06)
+
+### Architecture Improvements
+- [x] Extract GameEngine into subsystems (Spawner, Effects, PowerUp, Renderer)
+- [x] Add Sentry error tracking
+- [x] Add storage quota monitoring
+- [x] Fix Playwright E2E config
+
+### Score: 8.5/10 (up from 7.3/10)
+
+---
+
 ## How to Pick Tasks
 1. Pick any unchecked task above
 2. Create branch: `feat/task-name`
