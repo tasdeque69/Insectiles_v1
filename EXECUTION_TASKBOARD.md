@@ -14,17 +14,19 @@ Owner: CODEX
 | AC-005 | Replace stale pinboard with execution-backed truth | AC-001, AC-002 | CODEX | DONE | Pinboard states current metrics and blockers only |
 | AC-006 | Final closure summary table | AC-001..AC-005 | CODEX | DONE | Completed items + blockers + open questions delivered |
 | AC-007 | Fix audio arrangement progression defect + add regression tests | AC-001 | CODEX | DONE | `AudioEngine` uses absolute 16th-note counter and new tests pass |
+| AC-008 | Normalize completion artifacts with latest verification metrics | AC-001, AC-002 | CODEX | DONE | All docs now reflect 70/70 tests + 84.89% coverage snapshot |
 
 ## Logbook Protocol
 
 | Timestamp (UTC) | Task ID | Summary | Issues | Evidence |
 |---|---|---|---|---|
 | 2026-03-06T04:09 | AC-001 | Ran lint/build/test/perf checks | None | Command outputs in terminal history |
-| 2026-03-06T04:17 | AC-002 | Ran coverage and captured metrics | None | Coverage report: 83.83% lines |
+| 2026-03-06T04:17 | AC-002 | Ran coverage and captured metrics | None | Coverage report: 84.89% lines |
 | 2026-03-06T04:09-04:10 | AC-003 | Attempted playwright preflight/install | apt/proxy 403 | `npm run e2e:preflight`, `npm run e2e:install` outputs |
 | 2026-03-06T04:17 | AC-004 | Attempted npm prod audit | npm advisory API 403 | `npm run audit:prod` output |
 | 2026-03-06T04:19 | AC-005 | Updated Universal Workflow Pinboard | None | File diff + commit |
 | 2026-03-06T04:25 | AC-007 | Fixed audio bar progression + added edge-case tests | None | `npm test`, `npm run test:coverage` outputs |
+| 2026-03-06T04:32 | AC-008 | Synced workflow/taskboard metrics to latest run | None | `npm test` 70/70 + coverage 84.89% outputs |
 
 ## External Blockers
 

@@ -31,7 +31,7 @@ This is the current single-source execution board aligned with repository realit
 
 | Dimension | Score (1-10) | Evidence |
 |---|---:|---|
-| Functional correctness | 10.0 | `npm test` passes 67/67. |
+| Functional correctness | 10.0 | `npm test` passes 70/70. |
 | Code quality/readability | 9.4 | Engine/store/utils are modular and type-safe; main gameplay file still moderately dense but maintainable. |
 | Performance | 9.6 | `npm run perf:smoke` passes within 60 FPS budget. |
 | Security | 9.2 | No hardcoded runtime secret in committed config; audit endpoint check blocked by environment. |
@@ -83,7 +83,7 @@ This is the current single-source execution board aligned with repository realit
 ## 🧪 Verification & Coverage
 
 ### Current evidence snapshot
-- Tests: 67 passed, 0 failed.
+- Tests: 70 passed, 0 failed.
 - Coverage: **84.89% line**, 85.53% branch, 81.78% functions.
 - Performance smoke: pass (avg frame time below 16.67ms budget).
 
@@ -98,7 +98,7 @@ This is the current single-source execution board aligned with repository realit
 |---|---|---|
 | Type safety (`npm run lint`) | ✅ | Pass |
 | Production build (`npm run build`) | ✅ | Pass |
-| Unit/integration tests (`npm test`) | ✅ | 67/67 pass |
+| Unit/integration tests (`npm test`) | ✅ | 70/70 pass |
 | Coverage run (`npm run test:coverage`) | ✅ | 84.89% line coverage |
 | Perf smoke (`npm run perf:smoke`) | ✅ | Pass |
 | Playwright browser install | ⚠️ | apt/proxy 403 blocker |

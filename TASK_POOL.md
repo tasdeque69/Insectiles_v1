@@ -120,6 +120,7 @@
 | INF-018 | Normalize debug-flag parsing & storage reads | CODEX | 2026-03-07 | Added reusable flag parser (`1/true/yes/on`), improved fallback precedence, and expanded regression tests |
 | INF-019 | Replace stale workflow pinboard with execution-backed completion board | CODEX | 2026-03-06 | Rewrote `UNIVERSAL_WORKFLOW_PINBOARD.md`, added `EXECUTION_TASKBOARD.md`, and aligned `TASKS.md` release items with explicit external blockers |
 | INF-020 | Fix audio bar progression bug and expand edge-case tests | CODEX | 2026-03-06 | Added `total16thNotes` to `AudioEngine` so section/bar logic advances correctly; added 3 regression tests for wraparound, playBgm reset, and bar-based arrangement progression |
+| INF-021 | Sync completion artifacts with latest verification snapshot | CODEX | 2026-03-06 | Updated workflow/taskboard/sweep docs to reflect 70/70 tests and 84.89% coverage from latest autonomous verification run |
 | OPS-002 | Phase 0 branch analysis for multi-PR merge plan | CODEX | 2026-03-06 | Completed local-only analysis in `BRANCH_ANALYSIS_2026-03-06.md`; remote branch/PR merge execution blocked by GitHub access limits in container |
 | OPS-003 | Execute ordered merge of PRs #3,#5,#13,#11,#10,#7,#2,#6,#4 | CODEX | 2026-03-06 | Local repository history already reflects consolidated merge outcomes through PR #17 on `work`; task closed as superseded/verified by `git log` + `COMPLETION_SWEEP_2026-03-06.md` |
 

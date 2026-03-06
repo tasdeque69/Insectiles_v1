@@ -16,7 +16,7 @@
 
 | Dimension | Score | Why |
 |---|---:|---|
-| Functional correctness | 10 | 67/67 automated tests passing and deterministic game-rule utilities with edge-case coverage. |
+| Functional correctness | 10 | 70/70 automated tests passing and deterministic game-rule utilities with edge-case coverage. |
 | Code quality/readability | 9.5 | Modularized `utils/`, explicit types, clear state-store boundaries; still one larger UI component remains but no maintainability blockers. |
 | Performance | 9.5 | RAF loop, pooled particles, perf sampler, and smoke benchmark within frame budget. |
 | Security | 9.5 | No hardcoded API keys in runtime config; storage fallback avoids crashes in restricted contexts. |
@@ -45,7 +45,7 @@
 
 | Step | Implementation | Verification evidence | Status |
 |---|---|---|---|
-| 1 | Ran TypeScript and build/test/perf checks. | `npm run lint` pass; `npm run build` pass; `npm test` 67/67 pass; `npm run perf:smoke` pass. | ✅ Done |
+| 1 | Ran TypeScript and build/test/perf checks. | `npm run lint` pass; `npm run build` pass; `npm test` 70/70 pass; `npm run perf:smoke` pass. | ✅ Done |
 | 2 | Audited git history against historical PR index to ensure integrated best-of-PR state is already on `work`. | `git log --oneline --decorate -n 25` shows merge chain through PR #17 plus earlier consolidation commits. | ✅ Done |
 | 3 | Attempted E2E preflight/install for runtime-grade browser verification. | `npm run e2e:preflight` fails due missing browser binary; `npm run e2e:install` fails apt/proxy 403 (env blocker). | ⚠️ Blocked externally |
 | 4 | Closed obsolete blocked task in task pool by replacing with verified consolidation outcome. | Updated `TASK_POOL.md`: `OPS-003` moved from BLOCKED to DONE with rationale tied to local merge history evidence. | ✅ Done |
