@@ -19,7 +19,11 @@
     "e2e:preflight": "node ./scripts/e2e-preflight.mjs",
     "test:e2e:smoke": "npm run e2e:preflight && playwright test --project=chromium",
     "perf:smoke": "node --import tsx ./scripts/perf-smoke.mjs",
-    "test:coverage": "node --experimental-test-coverage --import tsx --import ./tests/setup.ts --test tests/*.test.ts"
+    "test:coverage": "node --experimental-test-coverage --import tsx --import ./tests/setup.ts --test tests/*.test.ts",
+    "audit:branches": "node scripts/branch-pr-audit.mjs",
+    "audit:branches:check": "node scripts/branch-pr-audit.mjs --check",
+    "audit:branches:verify": "npm run audit:branches && npm run audit:branches:validate",
+    "audit:branches:validate": "node scripts/branch-pr-audit.mjs --validate"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.14",

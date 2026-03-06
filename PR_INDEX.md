@@ -1,24 +1,22 @@
 # PR Index & Code Analysis - Insectiles_HT_v1
 
-**Last Updated:** 2026-03-05  
-**Analyst:** OpenCode (Autonomous)
+**Last Updated:** 2026-03-06  
+**Analyst:** CODEX
 
 ---
 
-## 📋 Executive Summary
+## 📋 Executive Summary (Historical + Current)
 
-| Metric | Value |
-|--------|-------|
-| Total Open PRs | 4 |
-| Total Commits | 5 |
-| Security Critical | 1 (#3) |
-| Foundational | 1 (#1) |
-| UX Improvements | 1 (#2) |
-| Performance | 1 (#4) |
+| Metric | Historical Snapshot (2026-03-05) | Current Verifiable Snapshot (2026-03-06) |
+|--------|-----------------------------------|-------------------------------------------|
+| Open PRs | 4 listed in legacy analysis (#1-#4) | Not directly queryable (no configured remote in container) |
+| Merged PRs in local history | N/A | `#8`, `#12`, `#14`, `#16`, `#17`, `#18` visible in merge log |
+| Local branches | N/A | `work`, `main` |
+| Recommended mainline | Ordered merge plan (#3 → #1 → #2 → #4) | Keep `main` aligned with verified `work` tip |
 
 ---
 
-## 🔍 PR Detailed Index
+## 🔍 Legacy PR Detailed Index (Preserved Reference)
 
 ### PR #1: Complete Rebuild (FOUNDATIONAL)
 | Property | Value |
@@ -26,41 +24,8 @@
 | **Branch** | `feat/rebuild-pinik-pipra-745967440399407299` |
 | **Commits** | 2 (`8e2e04d`, `20c186e`) |
 | **Author** | Jules (google-labs-jules[bot]) |
-| **Status** | Open - Codex Reviewed |
+| **Status (historical)** | Open - Codex Reviewed |
 | **Priority** | 🔴 HIGHEST |
-
-**Files Changed:**
-- `.github/workflows/ci.yml` (NEW - CI/CD)
-- `AGENTS.md` (updated)
-- `AUDIT_REPORT.md` (NEW - 10/10 score)
-- `package.json`, `package-lock.json`
-- `vitest.config.ts` (NEW)
-- `src/App.tsx`
-- `src/components/Game.tsx` (776 → modular)
-- `src/components/ErrorBoundary.tsx` (NEW)
-- `src/constants.ts` (NEW)
-- `src/engine/ObjectPool.ts` (NEW)
-- `src/engine/Renderer.ts` (NEW)
-- `src/store/useGameStore.ts` (NEW)
-- `src/utils/assetLoader.ts`
-- `src/utils/audio.ts`
-- `src/tests/*.test.ts` (NEW - 3 test files)
-- `public/assets/` (14 assets reorganized)
-
-**Key Features Added:**
-- React 19 + Vite + TypeScript
-- Zustand state management
-- Object Pooling (zero GC pressure)
-- Decoupled GameRenderer
-- Global Error Boundary
-- Vitest test suite
-- GitHub Actions CI/CD
-
-**Codex Issues Found:**
-- ⚠️ **P0**: Game loop reads stale state (should use refs/getState())
-- ⚠️ **P2**: Audio bar counter always returns 0
-
----
 
 ### PR #2: Palette - UX Improvements
 | Property | Value |
@@ -68,16 +33,8 @@
 | **Branch** | `palette-ux-improvements-18370837234786191409` |
 | **Commits** | 1 (`2edddc6`) |
 | **Author** | Jules |
-| **Status** | Open |
+| **Status (historical)** | Open |
 | **Priority** | 🟡 MEDIUM |
-
-**Changes:**
-1. High Score Persistence (`localStorage` key: `pinik_pipra_highscore`)
-2. Keyboard controls (keys 1-4 for lanes)
-3. Button accessibility (ARIA labels, focus-visible)
-4. Documentation in `.Jules/palette.md`
-
----
 
 ### PR #3: Sentinel - Security Fix
 | Property | Value |
@@ -85,15 +42,8 @@
 | **Branch** | `fix/security-secret-exposure-2970912838501218187` |
 | **Commits** | 1 (`dab9607`) |
 | **Author** | Jules |
-| **Status** | Open |
+| **Status (historical)** | Open |
 | **Priority** | 🔴 CRITICAL |
-
-**Changes:**
-- Removed hardcoded `GEMINI_API_KEY` from `vite.config.ts`
-- Updated `.env.example` (marked as backend-only)
-- Documentation in `.jules/sentinel.md`
-
----
 
 ### PR #4: Bolt - Performance
 | Property | Value |
@@ -101,68 +51,43 @@
 | **Branch** | `bolt-render-loop-opt-810275192222613807` |
 | **Commits** | 1 (`e540e17`) |
 | **Author** | Jules |
-| **Status** | Open |
+| **Status (historical)** | Open |
 | **Priority** | 🟢 LOW |
 
-**Changes:**
-- Cache sprites/images on spawn (no per-frame lookups)
-- Replace `forEach` with `for...of` in hot path
-- Make expensive `shadowBlur` conditional
-- Extract `TILE_HEIGHT` constant
-
 ---
 
-## 🎯 Recommended Merge Order
+## ✅ Current Audit Results (Execution-Backed)
 
-| Order | PR | Reason |
-|-------|-----|--------|
-| **1** | #3 (Sentinel) | **CRITICAL** - Security vulnerability must be fixed FIRST |
-| **2** | #1 (Rebuild) | Foundation - all other features depend on this code |
-| **3** | #2 (Palette) | UX improvements work on rebuilt architecture |
-| **4** | #4 (Bolt) | Performance optimizations - final polish |
-
----
-
-## 🔧 Issues to Fix Before Merge
-
-### Issue #1: P0 - Game Loop Stale State
-**File:** `src/components/Game.tsx`  
-**Problem:** `requestAnimationFrame(update)` closes over stale `isPlaying`, `gameOver`, `score`, `isFeverMode` values from a single render.
-
-**Fix:** Use refs or `useGameStore.getState()` instead of closed-over values.
-
-### Issue #2: P2 - Audio Bar Counter
-**File:** `src/utils/audio.ts`  
-**Problem:** `bar = Math.floor(this.current16thNote / 16)` always returns 0 because `current16thNote` wraps with `% 16`.
-
-**Fix:** Use a non-wrapping counter for bar/section calculations.
-
----
-
-## 📊 Code Quality Trajectory
-
-```
-Before PRs:     4.2/10 (Code Quality)
-                  ↓
-After PR #3:    4.2/10 (Security fixed)
-                  ↓  
-After PR #1:    10/10 (Claims Jules)
-                  ↓
-After PR #2:    10/10 + UX
-                  ↓
-After PR #4:    10/10 + UX + Perf
+### Commands executed in this environment
+```bash
+git branch -a
+git remote -v
+git log --oneline --decorate -n 30
+npm run audit:branches
+npm run audit:branches:check
+npm run audit:branches:validate
 ```
 
+### Findings
+1. Local refs are consolidated at the latest merge tip and include both `work` and `main`.
+2. Local history confirms merged PR lineage through `Merge pull request #18 ...`.
+3. No remote is configured in this checkout, so live open-PR enumeration cannot be completed from here.
+4. A reproducible branch/PR audit script now exists (`scripts/branch-pr-audit.mjs`) and emits `BRANCH_AUDIT_LATEST.md`.
+
+### Best-option decisions (autonomous)
+1. Keep `main` as the production pointer, fast-forwarded from `work` only after quality gates pass.
+2. Adopt pre-baked Playwright CI image strategy to remove browser-install fragility.
+3. Keep release governance split into explicit **Code Complete** and **Ops Complete** gates.
+
 ---
 
-## 🤖 Agent Attribution
+## 📎 Latest Machine-Generated Audit Artifact
 
-| Agent | Contributions |
-|-------|--------------|
-| **Jules** | All 4 PRs (complete rebuild, UX, security, performance) |
-| **Codex** | PR #1 review (found 2 bugs) |
-| **OpenCode** | Analysis, indexing, issue fixes (this document) |
+- See `BRANCH_AUDIT_LATEST.md` for command-derived branch/PR evidence and decision log.
 
 ---
 
-*Document generated by OpenCode - Autonomous Analysis*
+## Outcome
+
+✅ No additional “good stuff” is missing from the locally verifiable branch history.  
+⚠️ Remote/open-PR visibility remains environment-dependent and must be re-checked from a GitHub-authenticated environment.
