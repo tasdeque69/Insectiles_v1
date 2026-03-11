@@ -390,6 +390,32 @@ export class AudioEngine {
     osc.start();
     osc.stop(this.ctx.currentTime + 0.3);
   }
+
+  setVolume(value: number): void {
+    if (this.masterGain) {
+      this.masterGain.gain.value = Math.max(0, Math.min(1, value));
+    }
+  }
+
+  getVolume(): number {
+    return this.masterGain?.gain.value ?? 0.6;
+  }
+
+  mute(): void {
+    if (this.masterGain) {
+      this.masterGain.gain.value = 0;
+    }
+  }
+
+  unmute(): void {
+    if (this.masterGain) {
+      this.masterGain.gain.value = 0.6;
+    }
+  }
+
+  isMuted(): boolean {
+    return this.masterGain?.gain.value === 0;
+  }
 }
 
 export const audio = new AudioEngine();
